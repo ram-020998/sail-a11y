@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { width: 720px; font-family: system-ui, sans-serif; padding: 20px; margin: 0; background: #1a202c; color: #e2e8f0; }
+    h1 { font-size: 16px; margin: 0 0 16px; }
+    .module { margin-bottom: 12px; border: 1px solid #4a5568; border-radius: 6px; overflow: hidden; }
+    .module-header { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: #2d3748; cursor: pointer; user-select: none; }
+    .module-header input { accent-color: #4299e1; width: 16px; height: 16px; }
+    .module-header .title { font-size: 13px; font-weight: 700; }
+    .module-header .count { font-size: 11px; color: #718096; margin-left: 4px; }
+    .module-header .arrow { margin-left: auto; font-size: 10px; color: #718096; transition: transform .2s; }
+    .module-header .arrow.open { transform: rotate(90deg); }
+    .grid-wrap { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+    .grid-wrap.open { max-height: 2000px; }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    th { background: #1a202c; color: #a0aec0; font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: .5px; padding: 6px 8px; text-align: left; position: sticky; top: 0; }
+    td { padding: 5px 8px; border-top: 1px solid #2d3748; vertical-align: top; }
+    tr:hover td { background: #2d374880; }
+    td:first-child { width: 28px; text-align: center; }
+    td input { accent-color: #4299e1; width: 14px; height: 14px; }
+    .sev { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 9px; font-weight: 700; text-transform: uppercase; }
+    .sev-error { background: #e53e3e; color: #fff; }
+    .sev-warning { background: #d69e2e; color: #fff; }
+    .wcag { color: #90cdf4; font-size: 10px; white-space: nowrap; }
+    .cat-label { color: #b794f4; font-weight: 600; white-space: nowrap; }
+    .group-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #a0aec0; letter-spacing: .5px; margin: 16px 0 6px; }
+    .scope-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 5px; font-size: 12px; cursor: pointer; }
+    .scope-item:hover { background: #2d3748; }
+    .scope-item input { accent-color: #4299e1; width: 16px; height: 16px; }
+    .desc { color: #718096; font-size: 10px; margin-left: 28px; margin-bottom: 4px; }
+    button { width: 100%; padding: 10px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 12px; background: #4299e1; color: #fff; }
+    button:hover { background: #3182ce; }
+  </style>
+</head>
+<body>
+  <h1>⚙️ Settings</h1>
+  <div id="modules"></div>
+
+  <div class="group-title" style="margin-top:16px">Scope</div>
+  <label class="scope-item"><input type="checkbox" data-scope="dialogOnly" checked> Auto-scope to open dialog</label>
+  <div class="desc">When a popup/dialog is open, only scan its contents</div>
+  <label class="scope-item"><input type="checkbox" data-scope="skipSiteNav" checked> Skip site navigation</label>
+  <div class="desc">Exclude Appian site tab navigation from checks</div>
+
+  <button id="save">Save Settings</button>
+  <script src="settings.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { width: 280px; font-family: system-ui, sans-serif; padding: 16px; margin: 0; background: #1a202c; color: #e2e8f0; }
+    h1 { font-size: 15px; margin: 0 0 14px; }
+    button { width: 100%; padding: 10px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 6px; }
+    #run { background: #4299e1; color: #fff; }
+    #run:hover { background: #3182ce; }
+    #clear { background: #4a5568; color: #e2e8f0; }
+    #clear:hover { background: #718096; }
+    #startRec { background: #48bb78; color: #fff; }
+    #startRec:hover { background: #38a169; }
+    #stopRec { background: #e53e3e; color: #fff; display: none; }
+    #stopRec:hover { background: #c53030; }
+    #exportRec { background: #805ad5; color: #fff; display: none; }
+    #exportRec:hover { background: #6b46c1; }
+    hr { border: none; border-top: 1px solid #4a5568; margin: 10px 0; }
+    #status { font-size: 12px; color: #a0aec0; margin-top: 8px; min-height: 18px; }
+    .rec-dot { display: inline-block; width: 8px; height: 8px; background: #e53e3e; border-radius: 50%; margin-right: 6px; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .viz-label { font-size: 11px; font-weight: 700; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.5px; margin: 4px 0 6px; }
+    .viz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 6px; }
+    .viz-btn { padding: 7px 4px; font-size: 11px; font-weight: 600; border: 1px solid #4a5568; border-radius: 5px; background: #2d3748; color: #e2e8f0; cursor: pointer; margin: 0; width: auto; }
+    .viz-btn:hover { background: #4a5568; border-color: #718096; }
+  </style>
+</head>
+<body>
+  <h1>⚡ SAIL A11y Checker</h1>
+  <button id="run">Run Full Scan</button>
+  <button id="clear">Clear All Overlays</button>
+
+  <hr>
+  <div class="viz-label">🔍 Visualize</div>
+  <div class="viz-grid">
+    <button class="viz-btn" data-viz="taborder">🔢 Tab Order</button>
+    <button class="viz-btn" data-viz="headings">📑 Headings</button>
+    <button class="viz-btn" data-viz="landmarks">🗺️ Landmarks</button>
+    <button class="viz-btn" data-viz="aria">♿ ARIA</button>
+    <button class="viz-btn" data-viz="alttext">🖼️ Alt Text</button>
+    <button class="viz-btn" data-viz="links">🔗 Links</button>
+    <button class="viz-btn" data-viz="lang">🌐 Language</button>
+    <button class="viz-btn" data-viz="textspacing">📏 Spacing</button>
+  </div>
+
+  <hr>
+  <div class="viz-label">📹 Workflow Recording</div>
+  <button id="startRec">🔴 Start Recording</button>
+  <button id="stopRec"><span class="rec-dot"></span>Stop Recording</button>
+  <button id="exportRec">📋 Export Report</button>
+
+  <hr>
+  <button id="settings" style="background:#4a5568;color:#e2e8f0">⚙️ Settings</button>
+
+  <div id="status"></div>
+  <script src="popup.js"></script>
+</body>
+</html>
