@@ -295,32 +295,6 @@ Items requiring human judgment and review.
 
 ## Architecture
 
-The extension uses a modular architecture where all scripts share the page's `window` object via Chrome's content script injection.
-
-```
-┌─────────────────────────────────────────────────────────┐
-│  popup.html / popup.js  (Extension popup UI)            │
-│  ─ Injects scripts into the active tab                  │
-│  ─ Manages recording state                              │
-│  ─ Handles export                                       │
-└──────────────┬──────────────────────────────────────────┘
-               │ chrome.scripting.executeScript({ files })
-               ▼
-┌─────────────────────────────────────────────────────────┐
-│  core.js  →  window.SailA11y                            │
-│  ─ DOM helpers ($, isInsideGrid, isInsideSiteNav, ...)  │
-│  ─ SAIL detection (sailName, sailContext, getSail)       │
-│  ─ Contrast utilities (parseColor, luminance, ...)      │
-│  ─ UI utilities (createPanel, makeDraggable, showToast) │
-│  ─ Viz helpers (badge, outline)                         │
-└──────────────┬──────────────────────────────────────────┘
-               │ always injected first
-               ▼
-┌─────────────────────────────────────────────────────────┐
-│  Check Modules  →  window.SailA11yChecks                │
-│                                                         │
-## Architecture
-
 The extension uses a modular architecture organized into focused folders. All scripts share the page's `window` object via Chrome's content script injection.
 
 ```
