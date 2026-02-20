@@ -30,7 +30,8 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
   $('[role="group"],[role="radiogroup"]').forEach(el => {
     if (el.getAttribute('aria-labelledby') || el.getAttribute('aria-label')) return;
     if (isInsideGrid(el) || isGridSelectionCheckbox(el)) return;
-    if (el.className && /CardGroup|CardChoice/i.test(el.className)) return;
+    const cn = el.className?.baseVal || el.className || '';
+    if (typeof cn === 'string' && /CardGroup|CardChoice/i.test(cn)) return;
     const ctx = sailContext(el);
     add(el, 'error', 'Squad: Forms', ctx.sail + ' (role="' + el.getAttribute('role') + '") is missing a group label',
       'Add the "label" parameter to your ' + ctx.sail + '.');

@@ -5,6 +5,8 @@
  */
 'use strict';
 
+window.SailA11yChecks = window.SailA11yChecks || {};
+
 SailA11yChecks.runReviewChecks = function(issues, addFn) {
   const { $, isInsideGrid } = SailA11y;
   const add = addFn;

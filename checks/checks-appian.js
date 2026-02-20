@@ -5,6 +5,8 @@
  */
 'use strict';
 
+window.SailA11yChecks = window.SailA11yChecks || {};
+
 SailA11yChecks.runAppianChecks = function(issues, addFn) {
   const { $ } = SailA11y;
   const add = addFn;
