@@ -66,7 +66,7 @@ def analyze_component(component_dir):
     # Find all .less files
     for file in Path(component_dir).rglob('*.less'):
         if '__tests__' not in str(file):
-            result['less_files'].append(str(file))
+            result['less_files'].append(str(file).replace(APPIAN_REPO, ''))
             classes = extract_classes_from_less(file)
             result['classes'].extend(classes)
     
@@ -74,14 +74,15 @@ def analyze_component(component_dir):
     for ext in ['*.jsx', '*.js', '*.tsx', '*.ts']:
         for file in Path(component_dir).rglob(ext):
             if '__tests__' not in str(file) and '__i18n__' not in str(file):
-                result['jsx_files'].append(str(file))
+                result['jsx_files'].append(str(file).replace(APPIAN_REPO, ''))
                 classes = extract_classes_from_jsx(file)
                 result['classes'].extend(classes)
     
     # Deduplicate and sort
     result['classes'] = sorted(list(set(result['classes'])))
     
-    return result
+    # Only return if we found classes or files
+    return result if (result['classes'] or result['less_files'] or result['jsx_files']) else None
 
 def main():
     """Main extraction function"""
@@ -130,18 +131,24 @@ def main():
         if os.path.exists(comp_dir):
             print(f"  ✓ {comp_name}")
             result = analyze_component(comp_dir)
-            if result['classes']:
+            if result:
                 components[comp_name] = result
         else:
             print(f"  ✗ {comp_name} (not found)")
     
-    print(f"\n📝 Analyzing remaining components...")
+    print(f"\n📝 Analyzing ALL {len(component_dirs)} components...")
+    analyzed = 0
     for comp_name in component_dirs:
-        if comp_name not in priority_components and not comp_name.startswith('_'):
+        if comp_name not in components:  # Skip already analyzed priority components
             comp_dir = os.path.join(COMPONENTS_DIR, comp_name)
             result = analyze_component(comp_dir)
-            if result['classes']:
+            if result:
                 components[comp_name] = result
+                analyzed += 1
+                if analyzed % 50 == 0:
+                    print(f"  ... {analyzed} components analyzed")
+    
+    print(f"  ✓ Completed: {len(components)} total components with data")
     
     # Save results
     output_file = "/Users/ramaswamy.u/repo/sail-a11y/test-interfaces/appian-component-classes.json"
