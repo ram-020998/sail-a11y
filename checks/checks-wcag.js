@@ -32,8 +32,10 @@ SailA11yChecks.runWcagChecks = function(issues, addFn) {
 
   // Progress bars
   $('[role="progressbar"]').forEach(el => {
-    if (!el.getAttribute('aria-labelledby') && !el.getAttribute('aria-label'))
-      add(el, 'error', 'WCAG: Progress', getSail(el) + ' is missing an accessible label', 'Add "label" or "accessibilityText".');
+    if (el.getAttribute('aria-labelledby') || el.getAttribute('aria-label')) return;
+    const field = el.closest('[class*="FieldLayout"]');
+    if (field?.querySelector('[class*="field_label"]')?.textContent?.trim()) return;
+    add(el, 'error', 'WCAG: Progress', getSail(el) + ' is missing an accessible label', 'Add "label" or "accessibilityText".');
   });
 
   // Regions

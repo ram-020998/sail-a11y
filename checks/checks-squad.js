@@ -60,7 +60,7 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
   });
 
   // Collapsed label
-  $('[class*="COLLAPSED"], [class*="collapsed"]').forEach(el => {
+  $('[class*="COLLAPSED"], [class*="collapsed"], [class*="accessibilityhidden"]').forEach(el => {
     const field = el.closest('[class*="FieldLayout"]');
     if (!field) return;
     const prev = field.previousElementSibling;
@@ -91,9 +91,9 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
   });
 
   // Required fields legend
-  const hasReq = $('[class*="required_star"], [class*="---required"], [aria-required="true"]').length > 0;
+  const hasReq = $('[class*="required_star"], [class*="required_indicator"], [class*="---required"], [aria-required="true"]').length > 0;
   if (hasReq && !document.body.textContent.match(/required.*(asterisk|marked|\*)/i)) {
-    const first = $('[class*="required_star"], [class*="---required"]')[0];
+    const first = $('[class*="required_star"], [class*="required_indicator"], [class*="---required"]')[0];
     if (first) add(first, 'warning', 'Squad: Forms', 'Page has required fields but no legend explaining the asterisk',
       'Add: "Required fields are marked with an asterisk (*)".');
   }
@@ -124,7 +124,7 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
   // ========== VALIDATIONS ==========
 
   // Required inputs
-  $('[class*="required_star"], [class*="---required"]').forEach(el => {
+  $('[class*="required_star"], [class*="required_indicator"], [class*="---required"]').forEach(el => {
     const input = el.closest('[class*="FieldLayout---"]')?.querySelector('input, select, textarea');
     if (input && !input.hasAttribute('required') && input.getAttribute('aria-required') !== 'true')
       add(input || el, 'warning', 'Squad: Validations', 'Input appears required but missing aria-required', 'Set "required: true" on the component.');
@@ -230,7 +230,7 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
 
   // ========== BREADCRUMBS ==========
 
-  $('[class*="Breadcrumb---"], nav[aria-label*="breadcrumb" i]').forEach(el => {
+  $('[class*="BreadcrumbLayout"], [class*="breadcrumbs"], nav[aria-label*="breadcrumb" i]').forEach(el => {
     if (!el.getAttribute('aria-label') && !el.getAttribute('aria-labelledby'))
       add(el, 'error', 'Squad: Breadcrumbs', 'Breadcrumb is missing accessibilityText', 'Add "accessibilityText" identifying it as breadcrumb.');
   });
@@ -299,10 +299,11 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
 
   // ========== FILE UPLOAD ==========
 
-  $('[class*="FileUpload---"]').forEach(el => {
-    if (!el.closest('td') && !el.querySelector('[class*="label"]')?.textContent?.trim())
+  $('[class*="FileUploadWidget"], [class*="MultipleFileUploadWidget"]').forEach(el => {
+    const field = el.closest('[class*="FieldLayout"]');
+    if (!el.closest('td') && !field?.querySelector('[class*="field_label"]')?.textContent?.trim())
       add(el, 'warning', 'Squad: File Upload', 'a!fileUploadField may be missing a label', 'Add a "label" parameter.');
-    if (!el.querySelector('[class*="instructions"]')?.textContent?.trim())
+    if (!field?.querySelector('[class*="field_instructions"]')?.textContent?.trim())
       add(el, 'warning', 'Squad: File Upload', 'a!fileUploadField is missing instructions', 'Add "instructions" with accepted file types.');
   });
 
@@ -322,9 +323,11 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
 
   // ========== CHARTS ==========
 
-  $('[class*="Chart---"],[class*="BarChart---"],[class*="LineChart---"],[class*="PieChart---"],[class*="ColumnChart---"],[class*="AreaChart---"]').forEach(el => {
-    if (!el.getAttribute('aria-label') && !el.getAttribute('aria-labelledby'))
-      add(el, 'error', 'Squad: Charts', 'Chart is missing an accessible label', 'Add the "label" parameter.');
+  $('[class*="Chart---"],[class*="BarChart"],[class*="LineChart"],[class*="PieChart"],[class*="ColumnChart"],[class*="AreaChart"]').forEach(el => {
+    if (el.getAttribute('aria-label') || el.getAttribute('aria-labelledby')) return;
+    const field = el.closest('[class*="FieldLayout"]');
+    if (field?.querySelector('[class*="field_label"]')?.textContent?.trim()) return;
+    add(el, 'error', 'Squad: Charts', 'Chart is missing an accessible label', 'Add the "label" parameter.');
   });
 
   // ========== ICONS ==========
@@ -361,7 +364,7 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
   // ========== TOOLTIPS ==========
 
   // Stamp tooltip
-  $('[class*="StampField---"]').forEach(el => {
+  $('[class*="StampWidget"]').forEach(el => {
     if (el.getAttribute('title') || el.querySelector('[title]'))
       add(el, 'warning', 'Squad: Tooltips', 'a!stampField has a tooltip — verify it does not convey important info',
         'Remove tooltip and convey info through other means.');

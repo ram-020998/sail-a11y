@@ -19,7 +19,7 @@ SailA11yChecks.runAppianChecks = function(issues, addFn) {
   });
 
   // Stamp/icon fields
-  $('[class*="StampField---"],[class*="IconField---"]').forEach(el => {
+  $('[class*="StampWidget"],[class*="IconWidget"]').forEach(el => {
     if (el.getAttribute('aria-hidden') !== 'true' && !el.getAttribute('aria-label'))
       add(el, 'warning', 'Appian: Stamps', 'Stamp/icon field is missing accessibilityText',
         'Add "accessibilityText" or hide with "showWhen".');
