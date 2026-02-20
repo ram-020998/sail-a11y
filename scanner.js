@@ -6,7 +6,7 @@
 (() => {
   'use strict';
   const S = window.__sailA11ySettings || {};
-  const { $, sailContext, getSail, isInsideSiteNav, createPanel, cleanup } = SailA11y;
+  const { $, sailContext, getSail, isInsideSiteNav, createPanel, cleanup, getScope } = SailA11y;
 
   cleanup();
 

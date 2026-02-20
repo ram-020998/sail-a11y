@@ -62,7 +62,8 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
   // Duplicate input labels
   const labelTexts = {};
   $('[class*="FieldLayout---"]').forEach(field => {
-    if (field.className.includes('accessibilityhidden')) return;
+    const cn = field.className?.baseVal || field.className || '';
+    if (typeof cn === 'string' && cn.includes('accessibilityhidden')) return;
     if (!field.querySelector('input,select,textarea')) return;
     const label = field.querySelector('[class*="label"]')?.textContent?.trim();
     if (label) (labelTexts[label] = labelTexts[label] || []).push(field);
