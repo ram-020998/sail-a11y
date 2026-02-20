@@ -233,7 +233,7 @@ var SailA11y = (() => {
 
   // --- Public API ---
   return {
-    $, isInsideGrid, isInsideSiteNav, isGridSelectionCheckbox, hasLabel,
+    $, getScope, isInsideGrid, isInsideSiteNav, isGridSelectionCheckbox, hasLabel,
     sailName, sailContext, getSail, SAIL_MAP,
     parseColor, luminance, getBackgroundColor, contrastRatio,
     createPanel, makeDraggable, showToast, cleanup,
