@@ -7,6 +7,61 @@ The tool detected 47 issues but missed several expected checks. This document ou
 
 ## 🔴 Critical Gaps (High Priority)
 
+### 0. Label Detection Not Working (FALSE POSITIVES - CRITICAL!)
+
+**Current Problem:**
+Getting warnings like:
+```
+warning: a!textField - Input uses placeholder with no visible label or instructions
+```
+For inputs that **DO have labels** - the tool is not detecting them correctly.
+
+**Current Implementation:**
+```javascript
+// checks-squad.js lines ~38-50
+$('input[placeholder], textarea[placeholder]').forEach(el => {
+  if (isInsideGrid(el)) return;
+  if (el.getAttribute('aria-label') || el.getAttribute('aria-labelledby')) return;
+  const field = el.closest('[class*="FieldLayout---"]');
+  if (!field) return;
+  if (field.querySelector('[class*="label"]')?.textContent?.trim()) return;
+  if (field.querySelector('[class*="instructions"]')?.textContent?.trim()) return;
+  if (field.querySelector('label')?.textContent?.trim()) return;
+  add(el, 'warning', 'Squad: Forms', 'Input uses placeholder with no visible label', ...);
+});
+```
+
+**Problem:**
+- Selector `[class*="label"]` may not match Appian's actual label element classes
+- Not checking all possible label locations in the field layout
+- May need to check parent/sibling elements more thoroughly
+
+**Impact:**
+- **HIGH** - Generating false positives (warnings for fields that have labels)
+- Reduces trust in the tool
+- Makes it hard to identify real issues
+
+**Fix Needed:**
+1. Find correct CSS class patterns for field labels in Appian
+2. Check all possible label element locations:
+   - Direct child of field layout
+   - Sibling elements
+   - Associated via `for` attribute
+   - `aria-labelledby` references
+3. Verify label is visible (not `display: none` or `visibility: hidden`)
+4. Test with actual Appian field layouts
+
+**Appian Repo Analysis Required:**
+- Search for field layout component rendering
+- Find exact class names for label elements
+- Understand field layout DOM structure
+- Identify how `label` parameter is rendered
+- Check for `labelPosition` variations (ABOVE, ADJACENT, COLLAPSED, JUSTIFIED)
+
+**Priority:** 🔴 **CRITICAL** - Fix this first before other issues
+
+---
+
 ### 1. Icon Alt Text Checks (5 missing detections)
 
 **Expected Violations:**
@@ -329,16 +384,18 @@ Understand component hierarchy:
 
 ## 🎯 Success Criteria
 
-After fixes, the tool should detect:
-- **All 5 icon alt text violations**
-- **Chart label violation**
-- **Progress bar label violation** (if actually missing)
-- **Breadcrumb accessibilityText violation** (if present)
-- **Autocomplete violation**
-- **Required field aria-required violation**
-- **File upload instructions violation**
+After fixes, the tool should:
+- **Fix false positives** - Stop flagging inputs that have labels
+- Detect **all 5 icon alt text violations**
+- Detect **chart label violation**
+- Detect **progress bar label violation** (if actually missing)
+- Detect **breadcrumb accessibilityText violation** (if present)
+- Detect **autocomplete violation**
+- Detect **required field aria-required violation**
+- Detect **file upload instructions violation**
 
-**Target Detection Rate: 80-90%** of automatable violations
+**Target Detection Rate: 80-90%** of automatable violations  
+**Target False Positive Rate: <5%** (currently high due to label detection issue)
 
 ---
 
@@ -346,6 +403,7 @@ After fixes, the tool should detect:
 
 1. ✅ **This document created**
 2. 🔄 **Analyze Appian repo** (`/Users/ramaswamy.u/repo/forkedAe/ae`)
+   - **PRIORITY 1:** Field layout and label rendering (fix false positives)
    - Search for component class names
    - Extract CSS patterns
    - Understand DOM structures
