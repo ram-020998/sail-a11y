@@ -56,40 +56,66 @@
     i.el.setAttribute('data-a11y-issue', i.msg.slice(0, 60));
   });
 
+  // Sort issues by DOM position (top to bottom on page)
+  issues.sort((a, b) => {
+    const ra = a.el.getBoundingClientRect(), rb = b.el.getBoundingClientRect();
+    return (ra.top - rb.top) || (ra.left - rb.left);
+  });
+
   // Build panel HTML
   const errs = issues.filter(i => i.sev === 'error').length;
   const warns = issues.length - errs;
-  const cats = {};
-  issues.forEach(i => (cats[i.cat] = cats[i.cat] || []).push(i));
+  const catSet = [...new Set(issues.map(i => i.cat))].sort();
 
-  let html = '<div style="display:flex;gap:12px;margin-bottom:12px">'
+  let html = '<div style="display:flex;gap:12px;margin-bottom:10px">'
     + '<span style="padding:6px 10px;border-radius:4px;font-weight:600;font-size:12px;background:#e53e3e33;color:#fc8181">❌ ' + errs + ' errors</span>'
     + '<span style="padding:6px 10px;border-radius:4px;font-weight:600;font-size:12px;background:#d69e2e33;color:#f6e05e">⚠️ ' + warns + ' warnings</span></div>';
+
+  // Filter controls
+  html += '<div style="display:flex;gap:8px;margin-bottom:12px">'
+    + '<select id="sa11y-sev-filter" style="flex:1;padding:5px 8px;border-radius:4px;background:#2d3748;color:#e2e8f0;border:1px solid #4a5568;font-size:11px">'
+    + '<option value="all">All Severities</option><option value="error">Errors Only</option><option value="warning">Warnings Only</option></select>'
+    + '<select id="sa11y-cat-filter" style="flex:1;padding:5px 8px;border-radius:4px;background:#2d3748;color:#e2e8f0;border:1px solid #4a5568;font-size:11px">'
+    + '<option value="all">All Categories</option>' + catSet.map(c => '<option value="' + c + '">' + c + '</option>').join('') + '</select></div>';
 
   if (issues.length === 0) {
     html += '<div style="padding:20px 0;text-align:center;color:#68d391;font-weight:600">✅ No accessibility issues found!</div>';
   }
 
-  Object.keys(cats).sort().forEach(cat => {
-    html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#a0aec0;margin:14px 0 6px;letter-spacing:.5px">' + cat + '</div>';
-    cats[cat].forEach(issue => {
-      const tagBg = issue.sev === 'error' ? '#e53e3e' : '#d69e2e';
-      html += '<div data-idx="' + issues.indexOf(issue) + '" style="padding:10px 12px;margin-bottom:8px;border-radius:6px;background:#2d3748;cursor:pointer;font-size:12px;border-left:3px solid ' + tagBg + '">'
-        + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">'
-        + '<span style="display:inline-block;font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;text-transform:uppercase;background:' + tagBg + ';color:#fff">' + issue.sev + '</span>'
-        + '<span style="color:#90cdf4;font-weight:600;font-size:11px">' + issue.sail + '</span></div>'
-        + '<div style="color:#e2e8f0;margin-bottom:6px;word-break:break-word">' + issue.msg + '</div>'
-        + '<div style="color:#718096;font-size:11px;font-family:monospace;margin-bottom:6px;word-break:break-all">' + issue.elDesc + '</div>'
-        + '<div style="color:#a0aec0;font-size:11px;line-height:1.4;padding:6px 8px;background:#1a202c;border-radius:4px;word-break:break-word">💡 ' + issue.fix + '</div>'
-        + '</div>';
-    });
+  html += '<div id="sa11y-issues">';
+  issues.forEach((issue, idx) => {
+    const tagBg = issue.sev === 'error' ? '#e53e3e' : '#d69e2e';
+    const catShort = issue.cat.replace(/^(Squad|WCAG|Appian|Review):\s*/, '');
+    html += '<div data-idx="' + idx + '" data-sev="' + issue.sev + '" data-cat="' + issue.cat + '" style="padding:10px 12px;margin-bottom:8px;border-radius:6px;background:#2d3748;cursor:pointer;font-size:12px;border-left:3px solid ' + tagBg + '">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'
+      + '<div style="display:flex;align-items:center;gap:6px">'
+      + '<span style="display:inline-block;font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;text-transform:uppercase;background:' + tagBg + ';color:#fff">' + issue.sev + '</span>'
+      + '<span style="color:#90cdf4;font-weight:600;font-size:11px">' + issue.sail + '</span></div>'
+      + '<span style="font-size:9px;padding:2px 6px;border-radius:3px;background:#4a5568;color:#a0aec0;white-space:nowrap">' + esc(catShort) + '</span></div>'
+      + '<div style="color:#e2e8f0;margin-bottom:6px;word-break:break-word">' + issue.msg + '</div>'
+      + '<div style="color:#718096;font-size:11px;font-family:monospace;margin-bottom:6px;word-break:break-all">' + issue.elDesc + '</div>'
+      + '<div style="color:#a0aec0;font-size:11px;line-height:1.4;padding:6px 8px;background:#1a202c;border-radius:4px;word-break:break-word">💡 ' + issue.fix + '</div>'
+      + '</div>';
   });
+  html += '</div>';
 
   const panel = createPanel('sail-a11y-panel', '⚡ SAIL A11y — ' + issues.length + ' issues', html, {
     onClose() {
       document.querySelectorAll('[data-a11y-issue]').forEach(e => { e.style.removeProperty('outline'); e.style.removeProperty('outline-offset'); e.removeAttribute('data-a11y-issue'); });
     }
   });
+
+  // Filter logic
+  const applyFilters = () => {
+    const sev = panel.querySelector('#sa11y-sev-filter').value;
+    const cat = panel.querySelector('#sa11y-cat-filter').value;
+    panel.querySelectorAll('[data-idx]').forEach(card => {
+      const show = (sev === 'all' || card.dataset.sev === sev) && (cat === 'all' || card.dataset.cat === cat);
+      card.style.display = show ? '' : 'none';
+    });
+  };
+  panel.querySelector('#sa11y-sev-filter').addEventListener('change', applyFilters);
+  panel.querySelector('#sa11y-cat-filter').addEventListener('change', applyFilters);
 
   // Click-to-highlight
   panel.querySelectorAll('[data-idx]').forEach(item => {
