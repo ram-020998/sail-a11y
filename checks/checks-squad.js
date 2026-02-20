@@ -11,6 +11,8 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
   const { $, isInsideGrid, isGridSelectionCheckbox, hasLabel, getSail, sailContext, parseColor, getBackgroundColor, contrastRatio } = SailA11y;
   const add = addFn;
 
+  console.log('[SAIL A11y] Running Squad-Level checks...');
+
   // ========== FORMS ==========
   
   // Forms: inputs need labels

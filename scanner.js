@@ -15,6 +15,13 @@
 
   const disabledCats = S.disabledCats || [];
 
+  console.log('[SAIL A11y] Scanner starting...', {
+    settings: S,
+    disabledCats,
+    checksAvailable: !!window.SailA11yChecks,
+    scope: getScope()
+  });
+
   function add(el, sev, cat, msg, fix) {
     if (S.skipSiteNav !== false && isInsideSiteNav(el)) return;
     if (disabledCats.includes(cat)) return;
@@ -32,6 +39,15 @@
   if (S.wcagExtended !== false) SailA11yChecks.runWcagChecks(issues, add);
   if (S.appianPlatform !== false) SailA11yChecks.runAppianChecks(issues, add);
   if (S.reviewRequired !== false) SailA11yChecks.runReviewChecks(issues, add);
+
+  console.log('[SAIL A11y] Checks complete. Issues found:', issues.length);
+  if (issues.length === 0) {
+    console.log('[SAIL A11y] No issues found. Possible reasons:');
+    console.log('  - Page content is still loading');
+    console.log('  - All elements are inside site navigation (excluded by default)');
+    console.log('  - Check modules are disabled in settings');
+    console.log('  - Page has no accessibility issues (unlikely)');
+  }
 
   // Highlight issues on page
   issues.forEach(i => {
