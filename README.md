@@ -21,6 +21,7 @@ A Chrome extension purpose-built for auditing accessibility in **Appian SAIL** a
 - [Architecture](#architecture)
 - [File Reference](#file-reference)
 - [Design Decisions](#design-decisions)
+- [Documentation](#documentation)
 - [Troubleshooting](#troubleshooting)
 
 ---
@@ -419,6 +420,32 @@ The workflow recorder uses a fingerprint of `severity|category|SAIL component|me
 ### Draggable Panels
 
 All result panels are draggable by their title bar. This is essential because Appian pages vary in layout and the panel may overlap important content.
+
+---
+
+## Documentation
+
+Detailed documentation is organized in the `docs/` folder:
+
+### Research & Development
+- **`docs/appian-research/`** - Component selector research from Appian core repository
+  - `RESEARCH_PROCESS.md` - How we extracted correct CSS selectors
+  - `KEY_FINDINGS.md` - Critical selector patterns and corrections
+  - `component-selectors.json` - Minimal selector reference for the tool
+
+### Testing & Validation
+- **`docs/testing/`** - Test interface and validation artifacts
+  - `a11y-violation-test-interface.sail` - Test interface with 70+ violations
+  - `EXPECTED_DETECTIONS.md` - What should be detected (35 automated, 8 heuristic, 27 manual)
+  - `FIX_PLAN.md` - Prioritized implementation roadmap
+
+### Archive
+- **`archive/`** - Raw extraction data and scripts (not tracked in git)
+  - Full component class database (324KB JSON)
+  - Extraction and search scripts
+  - Can be regenerated if needed
+
+See `docs/README.md` for complete documentation index.
 
 ---
 

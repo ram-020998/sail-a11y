@@ -1,0 +1,117 @@
+{
+  "FieldLayout": {
+    "selector": "[class*=\"FieldLayout\"]",
+    "key_classes": [
+      "accessibilityhidden",
+      "field_instructions",
+      "field_label",
+      "field_layout",
+      "label_above",
+      "label_column",
+      "required_indicator"
+    ],
+    "wrapped_in": null
+  },
+  "IconWidget": {
+    "selector": "[class*=\"IconWidget\"]",
+    "key_classes": [],
+    "wrapped_in": null
+  },
+  "StampWidget": {
+    "selector": "[class*=\"StampWidget\"]",
+    "key_classes": [
+      "stamp",
+      "stamp_wrapper"
+    ],
+    "wrapped_in": null
+  },
+  "BreadcrumbLayout": {
+    "selector": "[class*=\"BreadcrumbLayout\"]",
+    "key_classes": [
+      "breadcrumbs"
+    ],
+    "wrapped_in": null
+  },
+  "ProgressBarWidget": {
+    "selector": "[class*=\"ProgressBarWidget\"]",
+    "key_classes": [
+      "completed",
+      "progress"
+    ],
+    "wrapped_in": null
+  },
+  "ProgressBarField": {
+    "selector": "[class*=\"ProgressBarField\"]",
+    "key_classes": [],
+    "wrapped_in": "FieldLayout"
+  },
+  "ButtonWidget": {
+    "selector": "[class*=\"ButtonWidget\"]",
+    "key_classes": [],
+    "wrapped_in": null
+  },
+  "LinkField": {
+    "selector": "[class*=\"LinkField\"]",
+    "key_classes": [],
+    "wrapped_in": null
+  },
+  "CardLayout": {
+    "selector": "[class*=\"CardLayout\"]",
+    "key_classes": [
+      "card_item",
+      "height_app_overview_card",
+      "height_design_view_card_choice",
+      "height_eur_dataset_card_main_icon",
+      "height_eur_dataset_card_related_icon",
+      "height_ssa_dashboard_card",
+      "selectable_card",
+      "selected_card",
+      "width_design_view_card_choice",
+      "width_eur_dataset_card_main_icon"
+    ],
+    "wrapped_in": null
+  },
+  "GridField": {
+    "selector": "[class*=\"GridField\"]",
+    "key_classes": [],
+    "wrapped_in": null
+  },
+  "FileUploadWidget": {
+    "selector": "[class*=\"FileUploadWidget\"]",
+    "key_classes": [],
+    "wrapped_in": null
+  },
+  "MultipleFileUploadWidget": {
+    "selector": "[class*=\"MultipleFileUploadWidget\"]",
+    "key_classes": [],
+    "wrapped_in": null
+  },
+  "BarChart": {
+    "selector": "[class*=\"BarChart\"]",
+    "key_classes": [],
+    "wrapped_in": "FieldLayout"
+  },
+  "LineChart": {
+    "selector": "[class*=\"LineChart\"]",
+    "key_classes": [],
+    "wrapped_in": "FieldLayout"
+  },
+  "PieChart": {
+    "selector": "[class*=\"PieChart\"]",
+    "key_classes": [],
+    "wrapped_in": "FieldLayout"
+  },
+  "ColumnChart": {
+    "selector": "[class*=\"ColumnChart\"]",
+    "key_classes": [],
+    "wrapped_in": "FieldLayout"
+  },
+  "AreaChart": {
+    "selector": "[class*=\"AreaChart\"]",
+    "key_classes": [
+      "no_scroll",
+      "scroll_horizontal"
+    ],
+    "wrapped_in": "FieldLayout"
+  }
+}
