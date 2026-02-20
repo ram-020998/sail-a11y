@@ -41,18 +41,27 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
   $('input[placeholder], textarea[placeholder]').forEach(el => {
     if (isInsideGrid(el)) return;
     if (el.getAttribute('aria-label') || el.getAttribute('aria-labelledby')) return;
-    const field = el.closest('[class*="FieldLayout---"]');
+    const field = el.closest('[class*="FieldLayout"]');
     if (!field) return;
-    if (field.querySelector('[class*="label"]')?.textContent?.trim()) return;
-    if (field.querySelector('[class*="instructions"]')?.textContent?.trim()) return;
-    if (field.querySelector('label')?.textContent?.trim()) return;
+    
+    // Check for field_label specifically (not just any element with "label" in class)
+    const hasFieldLabel = field.querySelector('[class*="field_label"]');
+    if (hasFieldLabel && hasFieldLabel.textContent?.trim()) return;
+    
+    // Check for instructions
+    const hasInstructions = field.querySelector('[class*="instructions"]');
+    if (hasInstructions && hasInstructions.textContent?.trim()) return;
+    
+    // Check for associated label element
+    if (el.id && document.querySelector(`label[for="${el.id}"]`)) return;
+    
     add(el, 'warning', 'Squad: Forms', 'Input uses placeholder with no visible label or instructions',
       'Add a "label" and use "instructions" for formats/ranges.');
   });
 
   // Collapsed label
-  $('[class*="COLLAPSED"], [class*="---collapsed"]').forEach(el => {
-    const field = el.closest('[class*="FieldLayout---"]');
+  $('[class*="COLLAPSED"], [class*="collapsed"]').forEach(el => {
+    const field = el.closest('[class*="FieldLayout"]');
     if (!field) return;
     const prev = field.previousElementSibling;
     if (!prev?.querySelector('h1,h2,h3,h4,h5,h6,[role="heading"]'))
@@ -62,11 +71,14 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
 
   // Duplicate input labels
   const labelTexts = {};
-  $('[class*="FieldLayout---"]').forEach(field => {
+  $('[class*="FieldLayout"]').forEach(field => {
     const cn = field.className?.baseVal || field.className || '';
     if (typeof cn === 'string' && cn.includes('accessibilityhidden')) return;
     if (!field.querySelector('input,select,textarea')) return;
-    const label = field.querySelector('[class*="label"]')?.textContent?.trim();
+    
+    // Use field_label specifically
+    const labelEl = field.querySelector('[class*="field_label"]');
+    const label = labelEl?.textContent?.trim();
     if (label) (labelTexts[label] = labelTexts[label] || []).push(field);
   });
   Object.entries(labelTexts).forEach(([label, fields]) => {
@@ -87,10 +99,14 @@ SailA11yChecks.runSquadChecks = function(issues, addFn) {
   }
 
   // Single checkbox redundant label
-  $('[class*="CheckboxGroup---"]').forEach(el => {
-    const choices = el.querySelectorAll('[class*="---choice"], input[type="checkbox"]');
+  $('[class*="CheckboxGroup"]').forEach(el => {
+    const choices = el.querySelectorAll('[class*="choice"], input[type="checkbox"]');
     if (choices.length !== 1) return;
-    const gl = (el.getAttribute('aria-label') || el.querySelector('[class*="label"]')?.textContent?.trim() || '').toLowerCase();
+    
+    // Get group label from field_label
+    const groupLabelEl = el.querySelector('[class*="field_label"]');
+    const gl = (el.getAttribute('aria-label') || groupLabelEl?.textContent?.trim() || '').toLowerCase();
+    
     const cl = (choices[0].closest('label')?.textContent?.trim() || choices[0].getAttribute('aria-label') || '').toLowerCase();
     if (gl && cl && gl === cl)
       add(el, 'warning', 'Squad: Forms', 'Single checkbox group/choice labels match: "' + gl.slice(0,25) + '"',
